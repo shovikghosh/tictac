@@ -85,6 +85,16 @@ function onBoxClick() {
     }
 }
 
+function addClickHandlers() {
+    var boxes = document.getElementsByClassName("box");
+    for (var idx = 0; idx < boxes.length; idx++) {
+        if (!boxes[idx].innerText)
+            boxes[idx].addEventListener('click', onBoxClick, false);
+    }
+}
+
+
+//----
 function announceWinner(val) {
     const name = val === 1 ? 'Player' : 'Computer';
     const message = `${name} wins. Click OK to start a new game`;
@@ -113,16 +123,23 @@ function generateCompMove() {
     addClickHandlers();
 }
 
-function addClickHandlers() {
-    var boxes = document.getElementsByClassName("box");
-    for (var idx = 0; idx < boxes.length; idx++) {
-        if (!boxes[idx].innerText)
-            boxes[idx].addEventListener('click', onBoxClick, false);
+function checkIsGameLeft() {
+    if (!movesLeft) {
+        setTimeout(() => announceDraw, 100);
+        reInitializeGrid();
+        renderMainGrid();
+        addClickHandlers();
+        return false;
+    } else {
+        return true;
     }
 }
 
+function announceDraw() {
+    const message = `Game is drawn. Click OK to start a new game`;
+    alert(message);
+}
 
-//0--
 function getCompMove() {
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
@@ -131,6 +148,17 @@ function getCompMove() {
             }
         }
     }
+}
+
+function movesLeft() {
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (!grid[i][j]) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 function isWinner(val) {
