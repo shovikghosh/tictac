@@ -79,9 +79,26 @@ function onBoxClick() {
     addClickHandlers();
 
     if (isWinner(1)) {
-        alert("Player Wins");
+        setTimeout(() => announceWinner(1), 100);
     } else {
         generateCompMove();
+    }
+}
+
+function announceWinner(val) {
+    const name = val === 1 ? 'Player' : 'Computer';
+    const message = `${name} wins. Click OK to start a new game`;
+    alert(message);
+    reInitializeGrid();
+    renderMainGrid();
+    addClickHandlers();
+}
+
+function reInitializeGrid() {
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            grid[i][j] = 0;
+        }
     }
 }
 
@@ -89,23 +106,28 @@ function generateCompMove() {
     const move = getCompMove();
     grid[move[0]][move[1]] = 2;
     renderMainGrid();
+    if (isWinner(2)) {
+        setTimeout(() => announceWinner(2), 100);
+    }
+    renderMainGrid();
     addClickHandlers();
 }
 
 function addClickHandlers() {
     var boxes = document.getElementsByClassName("box");
     for (var idx = 0; idx < boxes.length; idx++) {
-        boxes[idx].addEventListener('click', onBoxClick, false);
+        if (!boxes[idx].innerText)
+            boxes[idx].addEventListener('click', onBoxClick, false);
     }
 }
 
 
 //0--
 function getCompMove() {
-    for(let i = 0; i < 3;i++) {
-        for(let j = 0; j < 3;j++) {
-            if(!grid[i][j]) {
-                return [i,j];
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (!grid[i][j]) {
+                return [i, j];
             }
         }
     }
