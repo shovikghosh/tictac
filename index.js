@@ -23,9 +23,9 @@ const GRID_LENGTH = 3;
 let turn = 'X';
 
 function initializeGrid() {
-    for (let colIdx = 0;colIdx < GRID_LENGTH; colIdx++) {
+    for (let colIdx = 0; colIdx < GRID_LENGTH; colIdx++) {
         const tempArray = [];
-        for (let rowidx = 0; rowidx < GRID_LENGTH;rowidx++) {
+        for (let rowidx = 0; rowidx < GRID_LENGTH; rowidx++) {
             tempArray.push(0);
         }
         grid.push(tempArray);
@@ -34,22 +34,21 @@ function initializeGrid() {
 
 function getRowBoxes(colIdx) {
     let rowDivs = '';
-    
-    for(let rowIdx=0; rowIdx < GRID_LENGTH ; rowIdx++ ) {
+
+    for (let rowIdx = 0; rowIdx < GRID_LENGTH; rowIdx++) {
         let additionalClass = 'darkBackground';
         let content = '';
         const sum = colIdx + rowIdx;
-        if (sum%2 === 0) {
+        if (sum % 2 === 0) {
             additionalClass = 'lightBackground'
         }
         const gridValue = grid[colIdx][rowIdx];
-        if(gridValue === 1) {
+        if (gridValue === 1) {
             content = '<span class="cross">X</span>';
-        }
-        else if (gridValue === 2) {
+        } else if (gridValue === 2) {
             content = '<span class="cross">O</span>';
         }
-        rowDivs = rowDivs + '<div colIdx="'+ colIdx +'" rowIdx="' + rowIdx + '" class="box ' +
+        rowDivs = rowDivs + '<div colIdx="' + colIdx + '" rowIdx="' + rowIdx + '" class="box ' +
             additionalClass + '">' + content + '</div>';
     }
     return rowDivs;
@@ -57,7 +56,7 @@ function getRowBoxes(colIdx) {
 
 function getColumns() {
     let columnDivs = '';
-    for(let colIdx=0; colIdx < GRID_LENGTH; colIdx++) {
+    for (let colIdx = 0; colIdx < GRID_LENGTH; colIdx++) {
         let coldiv = getRowBoxes(colIdx);
         coldiv = '<div class="rowStyle">' + coldiv + '</div>';
         columnDivs = columnDivs + coldiv;
@@ -78,6 +77,19 @@ function onBoxClick() {
     grid[colIdx][rowIdx] = newValue;
     renderMainGrid();
     addClickHandlers();
+
+    if (isWinner(1)) {
+        alert("Player Wins");
+    } else {
+        generateCompMove();
+    }
+}
+
+function generateCompMove() {
+    const move = getCompMove();
+    grid[move[0]][move[1]] = 2;
+    renderMainGrid();
+    addClickHandlers();
 }
 
 function addClickHandlers() {
@@ -85,6 +97,58 @@ function addClickHandlers() {
     for (var idx = 0; idx < boxes.length; idx++) {
         boxes[idx].addEventListener('click', onBoxClick, false);
     }
+}
+
+
+//0--
+function getCompMove() {
+    for(let i = 0; i < 3;i++) {
+        for(let j = 0; j < 3;j++) {
+            if(!grid[i][j]) {
+                return [i,j];
+            }
+        }
+    }
+}
+
+function isWinner(val) {
+    let win = true;
+    //check row - wise win
+    for (let i = 0; i < 3; i++) {
+        win = true;
+        for (let j = 0; j < 3; j++) {
+            if (win && grid[i][j] === val) {
+                continue;
+            } else {
+                win = false;
+            }
+        }
+        if (win) {
+            return true;
+        }
+    }
+
+    for (let i = 0; i < 3; i++) {
+        win = true;
+        for (let j = 0; j < 3; j++) {
+            if (win && grid[j][i] === val) {
+                continue;
+            } else {
+                win = false;
+            }
+        }
+        if (win) {
+            return true;
+        }
+    }
+
+    win = (grid[0][0] === grid[1][1]) && (grid[2][2] == grid[1][1]) && grid[0][0] === val;
+    if (win) {
+        return win;
+    }
+
+    win = (grid[2][0] === grid[1][1]) && (grid[0][2] == grid[1][1]) && grid[2][0] === val;
+    return win;
 }
 
 initializeGrid();
