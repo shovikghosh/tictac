@@ -141,13 +141,19 @@ function announceDraw() {
 }
 
 function getCompMove() {
+    let move;
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
             if (!grid[i][j]) {
-                return [i, j];
+                move = [i,j];
+                const cWin = canWin([i,j]);
+                if(cWin) {
+                    return  [i,j];
+                }
             }
         }
     }
+    return move;
 }
 
 function movesLeft() {
@@ -157,6 +163,21 @@ function movesLeft() {
                 return true;
             }
         }
+    }
+    return false;
+}
+
+function canWin(xy) {
+    let win = true;
+    //check row - wise win
+    for(let i = 0; i < 3; i++) {
+        win = win && grid[i][xy[1]] !== 1;
+    }
+    for (let i = 0; i < 3; i++) {
+        win = win && grid[xy[0]][i] !== 1;
+    }
+    if (win) {
+        return win;
     }
     return false;
 }
